@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="lwh-netty" />
+        <module name="lwh-netty-client" />
+        <module name="lwh-netty-server" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="lwh-netty" target="1.5" />
+      <module name="lwh-netty-client" target="1.5" />
+      <module name="lwh-netty-server" target="1.5" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
