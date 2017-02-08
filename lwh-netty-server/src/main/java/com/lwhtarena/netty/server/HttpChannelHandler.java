@@ -30,6 +30,8 @@ public class HttpChannelHandler extends SimpleChannelInboundHandler<FullHttpRequ
     public static final int HTTP_CACHE_SECONDS = 60;
 
     protected void channelRead0(final ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
+        System.out.println("=================>>>>>>");
+
         /**检测解码情况**/
         if(!request.getDecoderResult().isSuccess()){
             sendError(ctx, BAD_REQUEST);
@@ -99,7 +101,11 @@ public class HttpChannelHandler extends SimpleChannelInboundHandler<FullHttpRequ
                     ctx.write(response);
                 } else {
                     System.err.println(future.channel() + "Transfer progress:" + progress / total);
-                    setDataToClient(response,String.valueOf(progress));
+                    setDataToClient(response,
+
+
+
+                            String.valueOf(progress));
                     ctx.write(response);
                 }
             }
