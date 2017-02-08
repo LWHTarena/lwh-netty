@@ -5,21 +5,43 @@
   <groupId>com.lwhtarena.netty</groupId>
   <artifactId>lwh-netty</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
 
   <name>lwh-netty</name>
   <url>http://maven.apache.org</url>
+
+  <modules>
+    <module>lwh-netty-client</module>
+    <module>lwh-netty-server</module>
+  </modules>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <dependencies>
+
+    <!--netty-->
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-all</artifactId>
+      <version>4.1.8.Final</version>
+    </dependency>
+
+    <!--httpclient-->
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.2</version>
+    </dependency>
+
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
 </project>
