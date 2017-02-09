@@ -3,14 +3,10 @@ package com.lwhtarena.netty.client;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.*;
-import io.netty.handler.stream.ChunkedWriteHandler;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author： liwh
@@ -59,31 +55,11 @@ public class HttpDownloadClient {
 
     }
 
-//    private class ChildChannelHandler extends ChannelInitializer<SocketChannel> {
-//        String local;
-//        public ChildChannelHandler(String local) {
-//            this.local = local;
-//        }
-//
-//        @Override
-//        protected void initChannel(SocketChannel ch) throws Exception {
-//
-/////===========>>>>>客户端接收到的是 httpResponse 响应，所以要使用 HttpResponseDecoder 进行解码
-//            ch.pipeline().addLast(new HttpResponseDecoder());
-//
-/////===========>>>>>客户端发送的是 httprequest，所以要使用 HttpRequestEncoder 进行编码
-//            ch.pipeline().addLast(new HttpRequestEncoder());
-//            ch.pipeline().addLast(new ChunkedWriteHandler());
-//            ch.pipeline().addLast(new HttpDownloadHandler(local));
-//        }
-//
-//    }
-
     public static void main(String[] args) throws Exception {
         HttpDownloadClient client = new HttpDownloadClient();
         client.connect("127.0.0.1", 9003,"D:/lwhSpaces/TemplateRepo/Centos7.1bit64.xva","temp_upload.xva");
 
-//        Map<String,Object> map =client.connectServer("127.0.0.1",9003,"D:/lwhSpaces/netty-temp/389848d904de3bc9b25bab88ebf802f2.xva","temp_upload.xva");
+
 
 //        client.connect("192.168.222.44", 9003,"/tmp/Centos7.1bit64.xva","temp_upload.xva");
 //client.connect("zlysix.gree.com", 80, "http://zlysix.gree.com/HelloWeb/download/20m.apk", "20m.apk");

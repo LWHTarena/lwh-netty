@@ -25,9 +25,6 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  */
 public class HttpChannelHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
-    public static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
-    public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
-    public static final int HTTP_CACHE_SECONDS = 60;
     int num =0;
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
         System.out.println("=========---"+num+"----========");
