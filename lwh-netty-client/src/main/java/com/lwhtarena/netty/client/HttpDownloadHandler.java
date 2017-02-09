@@ -13,60 +13,48 @@ import java.io.FileOutputStream;
 
 /**
  * @author： liwh
- * @Date: 2017/2/8.
+ * @Date: 2017/2/9.
  * @Description：<p></P>
  */
-public class HttpDownloadHandler extends ChannelInboundHandlerAdapter{
-    // 分块读取开关
-    private boolean readingChunks = false;
-    // 文件输出流
-    private FileOutputStream fOutputStream = null;
-    // 下载文件的本地对象
-    private File localfile = null;
-    // 待下载文件名
-    private String local = null;
-    // 状态码
-    private int succCode;
-    //进度
-    private long process;
+public class HttpDownloadHandler extends ChannelInboundHandlerAdapter {
+    private boolean readingChunks = false; // 分块读取开关
+    private FileOutputStream fOutputStream = null;// 文件输出流
+    private File localfile = null;// 下载文件的本地对象
+    private String local = null;// 待下载文件名
+    private int succCode;// 状态码
+    private long process;//
 
     public HttpDownloadHandler(String local) {
         this.local = local;
     }
 
-    /**
-     * @param ctx
-     * @param msg
-     * @throws Exception
-     * @description:<p>
-     *  接收响应信息
-     * </p>
-     */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 
-        if(msg instanceof HttpResponse){
+        System.out.println("----------------- channelRead --------------------");
+
+        if (msg instanceof HttpResponse) {// response 头信息
             HttpResponse response = (HttpResponse) msg;
-            /**获取状态码**/
-            succCode =response.getStatus().code();
-            if(succCode == 200){
-                /**设置下载文件存放地址**/
-                setDownLoadFile();
-                /**是否分块传输**/
+            succCode = response.getStatus().code();
+            if (succCode == 200) {
+                setDownLoadFile();// 设置下载文件
                 readingChunks = true;
             }
-            if(succCode==404){
-                System.out.println("请求文件不存在");
+            if(succCode == 404){
+                System.out.println("=====================>>>>>>>>>>>>>>>>404");
             }
+// System.out.println("CONTENT_TYPE:"
+// + response.headers().get(HttpHeaders.Names.CONTENT_TYPE));
         }
 
+        if (msg instanceof HttpContent) {// response 体信息
+            System.out.println(">>>>>>>>>>>>>>>>>>>loading...");
 
-        if(msg instanceof HttpContent){
             System.out.println("文件的长度："+new File(localfile.getAbsolutePath()).length());
 
-            HttpContent chunk = (HttpContent) msg;
 
-            /**是否是最后一段传输**/
+
+            HttpContent chunk = (HttpContent) msg;
             if (chunk instanceof LastHttpContent) {
                 readingChunks = false;
             }
@@ -74,61 +62,47 @@ public class HttpDownloadHandler extends ChannelInboundHandlerAdapter{
             ByteBuf buffer = chunk.content();
             byte[] dst = new byte[buffer.readableBytes()];
 
-            if(succCode ==200 ){
-                while (buffer.isReadable()){
+            System.out.println();
+            if (succCode == 200) {
+                while (buffer.isReadable()) {
                     buffer.readBytes(dst);
+
+//                    String body =new String(dst,"UTF-8");
+//                    System.out.println(body);
+
                     fOutputStream.write(dst);
+
+
                     buffer.release();
                 }
-                if(null !=fOutputStream){
+                if (null != fOutputStream) {
                     fOutputStream.flush();
                 }
             }
-        }
 
-
-        if(!readingChunks){
-            if(null!=fOutputStream){
-                System.out.println("下载完成！文件的路径："+localfile.getAbsolutePath());
-                fOutputStream.flush();
-                fOutputStream.close();
-                localfile =null;
-                fOutputStream =null;
+            if(succCode == 404){
+                System.out.println("=====================>>>>>>>>>>>>>>>>404");
             }
 
-            /**关闭ChannelHandlerContext**/
+        }
+
+        if (!readingChunks) {
+            if (null != fOutputStream) {
+                System.out.println("Download done->"+ localfile.getAbsolutePath());
+                fOutputStream.flush();
+                fOutputStream.close();
+                localfile = null;
+                fOutputStream = null;
+            }
             ctx.channel().close();
         }
 
     }
 
-
-    /**
-     * 捕获异常
-     * @param ctx
-     * @param cause
-     * @throws Exception
-     */
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        System.out.println("文件传输异常");
-    }
-
-    /**
-     * 传输块完成
-     * @param ctx
-     * @throws Exception
-     */
-    @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("有一段字节数组传输完成！");
-    }
-
     /**
      * 配置本地参数，准备下载
-     * 获取应用系统路径
      */
-    private void setDownLoadFile() throws Exception{
+    private void setDownLoadFile() throws Exception {
         if (null == fOutputStream) {
             local = SystemPropertyUtil.get("user.dir") + File.separator +local;
             System.out.println("================>>>>>>>>>>>>>>>>>>>>>");
@@ -141,5 +115,46 @@ public class HttpDownloadHandler extends ChannelInboundHandlerAdapter{
         }
     }
 
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 
+        System.out.println("管道异常：" + cause.getMessage());
+        cause.printStackTrace();
+        ctx.channel().close();
+    }
+
+
+    @Override
+    public void channelWritabilityChanged(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        System.out.println(ctx);
+        System.out.println(ctx.channel());
+//        super.channelWritabilityChanged(ctx);
+    }
+
+
+    /**
+     * 是客户端链接到服务端的标志
+     * @param ctx
+     * @throws Exception
+     */
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("有效的通道=========>>>>>>>>>");
+//        super.channelActive(ctx);
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<< 下载完毕");
+        System.out.println(ctx.channel().toString());
+//        super.channelReadComplete(ctx);
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("无效=========>>>>>>>>>");
+//        super.channelInactive(ctx);
+    }
 }
+

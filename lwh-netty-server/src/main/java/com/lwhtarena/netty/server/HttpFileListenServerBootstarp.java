@@ -16,6 +16,7 @@ public class HttpFileListenServerBootstarp implements Runnable{
     private  int port;
 
     public HttpFileListenServerBootstarp(int port) {
+        super();
         this.port = port;
     }
 
